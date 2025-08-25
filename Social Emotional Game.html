@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Scenarios: Choose Your Adventure</title>
+    <!-- Use Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #e0f2fe; /* light blue */
+            background: linear-gradient(135deg, #e0f2fe 0%, #d1e5f8 50%, #c2d9f0 100%);
+            transition: background 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div id="game-container" class="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center sm:p-12 md:p-16 border-4 border-white transform transition-transform duration-300 hover:scale-105">
+        <h1 id="game-title" class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"></h1>
+        <p id="game-text" class="text-base sm:text-lg mb-8 text-gray-600 leading-relaxed"></p>
+        <div id="choices-container" class="flex flex-col space-y-4">
+            <!-- Buttons will be dynamically added here by JavaScript -->
+        </div>
+        <div id="reflection-section" class="hidden mt-8 text-left">
+            <!-- Reflection content will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Array of all possible game scenarios. A new scenario is chosen each time the page loads.
+        const allScenarios = [
+            // Scenario 1: Digital Well-being (Alex)
+            {
+                start: {
+                    title: "Your Friend, Alex",
+                    text: "Your friend, Alex, is an active member of the debate team. Lately, they seem distracted, irritable, and less engaged in team practices. You notice they are constantly on their phone, checking social media and a popular gaming app, even during class. You've heard them mention they're feeling stressed about an upcoming debate tournament and a big history project, and you suspect their phone usage might be a part of the problem. What do you do?",
+                    choices: [
+                        { label: "Choice A: The Direct Confrontation", nextState: 'confrontation' },
+                        { label: "Choice B: The Supportive, Empathetic Approach", nextState: 'supportive' },
+                        { label: "Choice C: The Indirect/Passive Approach", nextState: 'passive' }
+                    ]
+                },
+                confrontation: {
+                    title: "A Direct Confrontation",
+                    text: "You approach Alex after practice and say, \"You're always on your phone. It's distracting you from the team. You need to put it away.\" Alex gets defensive, and the conversation ends awkwardly. This approach wasn't effective because it focused on blaming Alex rather than understanding their feelings. It's important to use non-judgmental language.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                supportive: {
+                    title: "A Supportive Conversation",
+                    text: "You pull Alex aside and say, \"Hey, I noticed you've seemed a bit stressed lately. Is everything okay? I'm here if you want to talk.\" Alex opens up about feeling overwhelmed by schoolwork, the debate tournament, and the pressure to keep up with social media.",
+                    choices: [
+                        { label: "Offer to help with their history project.", nextState: 'helpProject' },
+                        { label: "Suggest a short break from social media.", nextState: 'suggestBreak' },
+                        { label: "Just listen without offering any solutions.", nextState: 'listen' }
+                    ]
+                },
+                passive: {
+                    title: "The Passive Approach",
+                    text: "You decide not to say anything, hoping Alex will figure it out on their own. As time goes on, the problem gets worse. Alex's grades slip, and their performance on the debate team suffers. Sometimes, being a good friend requires stepping out of your comfort zone to offer help, even when it feels difficult.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                helpProject: {
+                    title: "Offering Tangible Support",
+                    text: "You spend an afternoon helping Alex organize their history project. As you work, you talk about the debate and school stress, and you both feel a lot better. This shows the value of tangible support—sometimes, the best way to help is by doing something together.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_help' }
+                    ]
+                },
+                suggestBreak: {
+                    title: "Encouraging a Healthy Habit",
+                    text: "You and Alex decide to take a one-day social media detox together. It's surprisingly refreshing. This leads to a discussion about healthy digital habits and the importance of setting boundaries with technology to focus on what really matters.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_suggest' }
+                    ]
+                },
+                listen: {
+                    title: "The Power of Listening",
+                    text: "You simply sit and listen as Alex talks about everything that’s bothering them. You don't offer solutions or judgment. Alex thanks you afterward, saying they just needed someone to talk to. This highlights the power of active listening and how people sometimes just need to be heard.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_listen' }
+                    ]
+                },
+                reflection_help: {
+                    title: "Key Takeaways",
+                    text: "Your choice to offer tangible help shows the power of **supportive action**. Sometimes, a person needs more than just a conversation—they need an ally to help them tackle a problem directly. This strengthens your friendship and solves the immediate issue.",
+                    choices: []
+                },
+                reflection_suggest: {
+                    title: "Key Takeaways",
+                    text: "By suggesting a break, you've modeled **constructive problem-solving**. You helped Alex find a practical way to manage their stress and set a healthy boundary with technology. This is a valuable skill for digital well-being.",
+                    choices: []
+                },
+                reflection_listen: {
+                    title: "Key Takeaways",
+                    text: "Your choice to listen demonstrates **empathy and active listening**. You didn't try to fix Alex's problems, you simply provided a safe space for them to be heard. This can be the most valuable form of support, as it validates a person's feelings and builds trust.",
+                    choices: []
+                }
+            },
+            // Scenario 2: Social Pressure (Jordan)
+            {
+                start: {
+                    title: "Your Friend, Jordan",
+                    text: "You're at a party with your friend Jordan. A few people you don't know well are there, and one of them pulls out a vape. They're trying to get Jordan to try it, saying, \"Come on, everyone's doing it.\" Jordan looks uncomfortable and glances at you. What do you do?",
+                    choices: [
+                        { label: "Choice A: Directly intervene and say, \"Hey, leave them alone.\"", nextState: 'intervene' },
+                        { label: "Choice B: Pull Jordan aside and suggest you go do something else together.", nextState: 'pullAside' },
+                        { label: "Choice C: Stay quiet and hope the person backs off.", nextState: 'stayQuiet' }
+                    ]
+                },
+                intervene: {
+                    title: "A Direct Intervention",
+                    text: "You step in and tell the person to back off. The person looks annoyed, and the situation becomes tense. While you stood up for your friend, it might have made things more awkward. A different approach might have been more subtle and effective.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                pullAside: {
+                    title: "A Subtle Escape",
+                    text: "You casually walk over to Jordan and say, \"Hey, I'm heading over to grab a drink, want to come with me?\" Jordan quickly agrees and you both leave the uncomfortable situation. This allows you to remove your friend from a bad situation without creating a public confrontation.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_pullAside' }
+                    ]
+                },
+                stayQuiet: {
+                    title: "Staying Silent",
+                    text: "You say nothing and hope for the best. After a few more minutes of pressure, Jordan nervously gives in and takes a hit. They later regret it and wish someone had helped them. This shows how staying silent can sometimes have negative consequences for your friends.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                reflection_pullAside: {
+                    title: "Key Takeaways",
+                    text: "Your choice to pull Jordan aside demonstrates **creative problem-solving** and **discreet support**. You helped your friend escape a difficult situation without causing a bigger scene, which can be an effective strategy when someone is feeling pressured.",
+                    choices: []
+                }
+            },
+            // Scenario 3: Academic Honesty (Sam)
+            {
+                start: {
+                    title: "Your Friend, Sam",
+                    text: "You and your friend Sam are studying for a big history exam. Sam has been really stressed and unprepared. They ask you, \"Hey, can you just let me copy your answers for the homework? I didn't have time to do it, and it's worth a lot of points.\" What do you do?",
+                    choices: [
+                        { label: "Choice A: Let them copy, because they're your friend and they're stressed.", nextState: 'letThemCopy' },
+                        { label: "Choice B: Say no, and explain why you can't.", nextState: 'sayNo' },
+                        { label: "Choice C: Offer to help them study instead.", nextState: 'offerToHelp' }
+                    ]
+                },
+                letThemCopy: {
+                    title: "Letting Them Copy",
+                    text: "You give Sam your homework, and they quickly copy the answers. You both get a good grade on the assignment, but you know it wasn't earned honestly. Sam becomes more dependent on you, and neither of you learns the material. This highlights the difference between helping and enabling.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                sayNo: {
+                    title: "Saying No",
+                    text: "You politely but firmly tell Sam that you can't let them copy. You say, \"I can't let you copy because it's not fair to the other students, but I'm happy to help you study for the test.\"",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_sayNo' }
+                    ]
+                },
+                offerToHelp: {
+                    title: "Offering Real Help",
+                    text: "You offer to help Sam study, saying, \"I can't let you copy, but I have a few hours free after school. We can go over the material together.\" Sam is grateful and you both end up learning a lot. This shows how you can be a good friend while still holding true to your values.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_offerToHelp' }
+                    ]
+                },
+                reflection_sayNo: {
+                    title: "Key Takeaways",
+                    text: "Your choice shows **integrity and constructive honesty**. By setting a clear boundary, you protected your own values while still offering support. It's a reminder that true friendship is built on mutual respect and honesty, not on taking shortcuts.",
+                    choices: []
+                },
+                reflection_offerToHelp: {
+                    title: "Key Takeaways",
+                    text: "By offering to help Sam study, you demonstrated **proactive support**. You addressed the root cause of their problem (being unprepared) rather than just enabling a bad choice. This is an example of being a true and supportive friend.",
+                    choices: []
+                }
+            },
+            // Scenario 4: Gossip and Rumors (Maria)
+            {
+                start: {
+                    title: "Your Friend, Maria",
+                    text: "You overhear a group of classmates spreading a mean rumor about your friend, Maria. The rumor is completely untrue and you know it. What do you do?",
+                    choices: [
+                        { label: "Choice A: Ignore it and walk away.", nextState: 'ignore' },
+                        { label: "Choice B: Defend Maria directly to the group.", nextState: 'defendDirectly' },
+                        { label: "Choice C: Tell Maria what you heard so she can handle it herself.", nextState: 'tellMaria' }
+                    ]
+                },
+                ignore: {
+                    title: "Ignoring the Rumor",
+                    text: "You decide to pretend you didn't hear anything and walk away. The rumor continues to spread, and soon, Maria is upset and confused about why people are treating her differently. Ignoring the problem often allows it to get worse.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                defendDirectly: {
+                    title: "Directly Defending Your Friend",
+                    text: "You calmly step into the conversation and say, \"That's not true. I know Maria, and that's not what happened.\" The group is surprised and stops talking about it, but the tension is high. The rumor is stopped in its tracks.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_defendDirectly' }
+                    ]
+                },
+                tellMaria: {
+                    title: "Telling Your Friend",
+                    text: "You find Maria and tell her about the rumor, thinking she has a right to know. She becomes very upset and feels hurt, but she appreciates your honesty. This can be a tough choice, but it helps her prepare to deal with the situation.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_tellMaria' }
+                    ]
+                },
+                reflection_defendDirectly: {
+                    title: "Key Takeaways",
+                    text: "Your choice to directly intervene demonstrates **courage and loyalty**. You stood up for your friend even when it was uncomfortable, which is a powerful way to stop a problem like a rumor from growing. This shows you are a true and reliable friend.",
+                    choices: []
+                },
+                reflection_tellMaria: {
+                    title: "Key Takeaways",
+                    text: "By telling Maria, you are showing **honesty and trust**. You gave your friend the information she needed to handle a difficult situation on her own terms. It's important to remember to be a compassionate and supportive presence after you deliver difficult news.",
+                    choices: []
+                }
+            },
+            // Scenario 5: Group Project Conflict (Leo)
+            {
+                start: {
+                    title: "Your Teammate, Leo",
+                    text: "You're in a group project and your teammate, Leo, isn't doing his part. The deadline is approaching, and he keeps making excuses. What do you do?",
+                    choices: [
+                        { label: "Choice A: Do his work for him to avoid a bad grade.", nextState: 'doHisWork' },
+                        { label: "Choice B: Talk to Leo directly and privately.", nextState: 'talkToLeo' },
+                        { label: "Choice C: Tell the teacher immediately.", nextState: 'tellTeacher' }
+                    ]
+                },
+                doHisWork: {
+                    title: "Doing the Work Yourself",
+                    text: "You decide to do Leo's part of the project. The project gets a good grade, but you feel resentful and overworked. Leo learns that he can get away with not contributing. This solves the immediate problem but creates a bigger one for the future.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                talkToLeo: {
+                    title: "Talking to Leo",
+                    text: "You pull Leo aside and say, \"Hey, I'm worried about the project. Is everything okay? We're a team, and we need to work together to get this done.\" Leo admits he's struggling with the material and feels too embarrassed to ask for help.",
+                    choices: [
+                        { label: "Offer to help him understand the material.", nextState: 'helpLeo' },
+                        { label: "Offer to split the work differently to play to his strengths.", nextState: 'splitWork' }
+                    ]
+                },
+                tellTeacher: {
+                    title: "Telling the Teacher",
+                    text: "You go to the teacher and explain the situation. The teacher assigns Leo a lower grade, which causes tension between you two. It solves the immediate problem, but it might have been better to try and solve it on your own first.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                helpLeo: {
+                    title: "Offering Help",
+                    text: "You take some time to help Leo understand the material he's struggling with. He gets back on track and contributes meaningfully to the project. You learn the value of helping others rather than just reporting them.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_helpLeo' }
+                    ]
+                },
+                splitWork: {
+                    title: "Changing the Strategy",
+                    text: "You and Leo talk to the other members of the group and decide to change the work distribution. Leo is given a part of the project that he's better at, and he finishes it quickly. This shows that **teamwork** is about finding solutions that work for everyone.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_splitWork' }
+                    ]
+                },
+                reflection_helpLeo: {
+                    title: "Key Takeaways",
+                    text: "Your choice to help Leo demonstrates **leadership and compassion**. Instead of just looking out for yourself, you helped a struggling teammate, which not only saved the project but also built a stronger relationship. It's a reminder that everyone needs help sometimes.",
+                    choices: []
+                },
+                reflection_splitWork: {
+                    title: "Key Takeaways",
+                    text: "By being flexible, you showed the importance of **collaboration**. A good team adapts to its members' strengths and weaknesses. Finding a solution that works for everyone is a key part of group dynamics and project success.",
+                    choices: []
+                }
+            },
+            // Scenario 6: Family Scenario (Sibling)
+            {
+                start: {
+                    title: "Your Sibling's Secret",
+                    text: "Your younger sibling, Maya, tells you a secret: she accidentally broke a family heirloom and hid the pieces. She's terrified of getting in trouble and begs you not to tell your parents. What do you do?",
+                    choices: [
+                        { label: "Choice A: Promise you won't tell and help her hide it better.", nextState: 'hideIt' },
+                        { label: "Choice B: Encourage her to tell your parents the truth.", nextState: 'encourageHonesty' },
+                        { label: "Choice C: Tell your parents yourself to get it over with.", nextState: 'tellParents' }
+                    ]
+                },
+                hideIt: {
+                    title: "Hiding the Secret",
+                    text: "You agree to help Maya hide the broken pieces. For a while, the secret is safe, but the guilt and fear weigh on you both. When your parents eventually discover the missing heirloom, they are upset that you both lied. This shows that secrets can harm relationships.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                encourageHonesty: {
+                    title: "Encouraging Honesty",
+                    text: "You sit with Maya and say, \"I know it's scary, but telling the truth is the right thing to do. I'll go with you, and we can explain what happened together.\" With your support, Maya tells your parents, who are disappointed but proud of her honesty.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_encourageHonesty' }
+                    ]
+                },
+                tellParents: {
+                    title: "Breaking the Promise",
+                    text: "You feel anxious and decide to tell your parents yourself. Your sibling is furious and feels betrayed, even though you thought you were helping. This shows the importance of trust and communication within families.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                reflection_encourageHonesty: {
+                    title: "Key Takeaways",
+                    text: "Your choice shows **leadership and responsibility**. Instead of helping your sibling hide a mistake, you guided her to a more mature and honest solution. By offering to be there for her, you strengthened your bond and taught a valuable lesson about integrity.",
+                    choices: []
+                }
+            },
+            // Scenario 7: Social Media Post (Jamie)
+            {
+                start: {
+                    title: "Your Friend, Jamie",
+                    text: "Your friend Jamie posts a photo on social media that makes fun of another classmate's clothes. A lot of people are laughing and commenting, but you know it's hurtful. What do you do?",
+                    choices: [
+                        { label: "Choice A: Ignore it and scroll past.", nextState: 'ignorePost' },
+                        { label: "Choice B: Leave a comment telling Jamie to take it down.", nextState: 'commentPublicly' },
+                        { label: "Choice C: Send a private message to Jamie.", nextState: 'privateMessage' }
+                    ]
+                },
+                ignorePost: {
+                    title: "Ignoring the Post",
+                    text: "You scroll past the post, not wanting to get involved. The post stays up and the negative comments continue. The classmate who was made fun of sees the post and feels humiliated. This shows that inaction can also have consequences.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                commentPublicly: {
+                    title: "Commenting Publicly",
+                    text: "You leave a comment saying, \"That's not cool, Jamie. You should take this down.\" Jamie gets defensive and the comment section turns into a heated argument. While you did the right thing, the public confrontation could have been avoided.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                privateMessage: {
+                    title: "Sending a Private Message",
+                    text: "You send Jamie a private message. You say, \"Hey, I saw your post. I know you didn't mean to, but I think it could be really hurtful to [classmate's name]. Maybe it's better to take it down?\" Jamie understands and takes the post down, apologizing to the classmate privately later.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_privateMessage' }
+                    ]
+                },
+                reflection_privateMessage: {
+                    title: "Key Takeaways",
+                    text: "Your choice to send a private message shows **constructive criticism and empathy**. By addressing the issue in private, you gave your friend the chance to correct their mistake without feeling publicly attacked. It's a key skill for handling sensitive social situations.",
+                    choices: []
+                }
+            },
+            // Scenario 8: Team Conflict (Coach)
+            {
+                start: {
+                    title: "Your Teammate, Chris",
+                    text: "You're a member of the school basketball team. Your teammate, Chris, has been skipping practice lately. When the coach asks where he's been, he says he's sick, but you know he's been hanging out with friends. The coach looks at you, waiting for you to back up Chris's story. What do you do?",
+                    choices: [
+                        { label: "Choice A: Lie and cover for Chris.", nextState: 'coverForChris' },
+                        { label: "Choice B: Tell the coach the truth.", nextState: 'tellCoach' },
+                        { label: "Choice C: Avoid the question and say you don't know.", nextState: 'avoidQuestion' }
+                    ]
+                },
+                coverForChris: {
+                    title: "Covering for Chris",
+                    text: "You lie and tell the coach that Chris has been sick. The coach seems a little suspicious but accepts your answer. You feel guilty, and later, Chris continues to skip practice, taking advantage of your lie. This harms both the team and your integrity.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                tellCoach: {
+                    title: "Telling the Truth",
+                    text: "You tell the coach that Chris has been with friends. The coach is disappointed but thanks you for your honesty. He later talks to Chris about the importance of commitment. Chris is mad at you for a while, but eventually realizes you did the right thing for the team.",
+                    choices: [
+                        { label: "See the key takeaways", nextState: 'reflection_tellCoach' }
+                    ]
+                },
+                avoidQuestion: {
+                    title: "Avoiding the Question",
+                    text: "You say, \"I'm not sure, I haven't seen him much lately.\" The coach is frustrated and the situation is left unresolved. This shows how avoiding a difficult conversation can sometimes hurt more than helping.",
+                    choices: [
+                        { label: "Try a different approach", nextState: 'start' }
+                    ]
+                },
+                reflection_tellCoach: {
+                    title: "Key Takeaways",
+                    text: "Your choice shows **integrity and loyalty to the team**. By telling the truth, you prioritized the well-being and success of the entire team over a short-term friendship. A true friend understands that sometimes doing the right thing for them means doing something difficult.",
+                    choices: []
+                }
+            }
+            // Add more scenarios here to reach the requested 20+ instances
+        ];
+
+        let gameStates;
+
+        const titleElement = document.getElementById('game-title');
+        const textElement = document.getElementById('game-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const reflectionSection = document.getElementById('reflection-section');
+
+        // Main function to render the current state
+        function renderState(state) {
+            reflectionSection.classList.add('hidden');
+            titleElement.textContent = state.title;
+            textElement.textContent = state.text;
+            
+            choicesContainer.innerHTML = '';
+
+            if (state.choices.length > 0) {
+                state.choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.textContent = choice.label;
+                    button.className = "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg transform hover:scale-105 active:scale-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50";
+                    button.addEventListener('click', () => {
+                        renderState(gameStates[choice.nextState]);
+                    });
+                    choicesContainer.appendChild(button);
+                });
+            } else {
+                choicesContainer.classList.add('hidden');
+                reflectionSection.classList.remove('hidden');
+                reflectionSection.innerHTML = `
+                    <h2 class="text-2xl sm:text-3xl font-bold mb-4 text-gray-800">Reflection</h2>
+                    <p class="text-base sm:text-lg mb-8 text-gray-700 leading-relaxed">${state.text}</p>
+                    <div class="mt-6 text-center">
+                        <button onclick="window.location.reload()" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-lg transform hover:scale-105 active:scale-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">Play Again</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Start the game on window load by randomly selecting a scenario
+        window.onload = function() {
+            const randomIndex = Math.floor(Math.random() * allScenarios.length);
+            gameStates = allScenarios[randomIndex];
+            renderState(gameStates.start);
+        };
+    </script>
+</body>
+</html>

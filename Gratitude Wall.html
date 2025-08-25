@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gratitude Wall</title>
+    <!-- Load Tailwind CSS from CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for animations and specific elements */
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+
+        :root {
+            --card-color-1: #e0f2fe; /* Light Blue */
+            --card-color-2: #d1fae5; /* Mint Green */
+            --card-color-3: #fef9c3; /* Pale Yellow */
+            --card-color-4: #fbcfe8; /* Light Pink */
+            --card-color-5: #f3e8ff; /* Lavender */
+            --card-color-6: #fee2e2; /* Pale Rose */
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            /* Updated body background to a new, calming gradient */
+            background: linear-gradient(135deg, #bae6fd, #a7f3d0);
+        }
+        
+        .wall-canvas {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background-color: #f0f9ff; /* Very light, soft blue background */
+        }
+
+        .gratitude-card {
+            position: absolute;
+            width: 250px;
+            height: 180px;
+            transform-origin: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        /* Hover effect */
+        .gratitude-card:hover {
+            transform: scale(1.1) rotate(1deg);
+            z-index: 10;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .like-button {
+            transition: transform 0.1s ease-in-out;
+        }
+
+        .like-button:active {
+            transform: scale(1.2);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 20;
+        }
+
+        .modal-content {
+            z-index: 30;
+        }
+
+        .add-note-btn {
+            background-color: #3b82f6;
+            color: white;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .add-note-btn:hover {
+            background-color: #60a5fa;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center p-4">
+
+    <!-- Header and "Add Note" Button -->
+    <div class="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white bg-opacity-70 backdrop-blur-md rounded-b-3xl shadow-md">
+        <h1 class="text-3xl font-bold text-gray-800">
+            Gratitude Wall
+        </h1>
+        <button id="addNoteBtn" class="add-note-btn font-semibold py-2 px-6 rounded-full shadow-lg transform transition duration-200 hover:scale-105">
+            <span class="text-lg">+</span> Add a Note
+        </button>
+    </div>
+
+    <!-- The Gratitude Wall Canvas -->
+    <div id="gratitudeWall" class="wall-canvas w-full mt-24">
+        <!-- Gratitude cards will be dynamically inserted here by JavaScript -->
+        <p id="emptyMessage" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl text-gray-500 opacity-60">
+            Click 'Add a Note' to share your gratitude!
+        </p>
+    </div>
+
+    <!-- Modal for Adding a New Note -->
+    <div id="noteModal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl scale-95 opacity-0 transform transition-all duration-300">
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-700">Express Your Gratitude</h2>
+            <form id="noteForm" class="space-y-4">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">I am grateful for...</label>
+                    <input type="text" id="title" name="title" placeholder="A kind friend, a sunny day, etc." class="mt-1 block w-full bg-gray-100 border-transparent rounded-lg text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="body" class="block text-sm font-medium text-gray-700">Because...</label>
+                    <textarea id="body" name="body" rows="4" placeholder="It made me feel supported, it brought me joy, etc." class="mt-1 block w-full bg-gray-100 border-transparent rounded-lg text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <div>
+                    <label for="author" class="block text-sm font-medium text-gray-700">Your name (optional)</label>
+                    <input type="text" id="author" name="author" placeholder="Anonymous" class="mt-1 block w-full bg-gray-100 border-transparent rounded-lg text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="cardStyle" class="block text-sm font-medium text-gray-700">Choose a card design</label>
+                    <select id="cardStyle" name="cardStyle" class="mt-1 block w-full bg-gray-100 border-transparent rounded-lg text-gray-900 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="style1">Light Blue</option>
+                        <option value="style2">Mint Green</option>
+                        <option value="style3">Pale Yellow</option>
+                        <option value="style4">Light Pink</option>
+                        <option value="style5">Lavender</option>
+                        <option value="style6">Pale Rose</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button type="button" id="cancelBtn" class="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 transition duration-200 hover:bg-gray-200">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg font-semibold text-white bg-blue-600 transition duration-200 hover:bg-blue-700">Post Note</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal for viewing a single note -->
+    <div id="viewModal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 hidden">
+        <div class="modal-content bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl scale-95 opacity-0 transform transition-all duration-300">
+            <div id="viewCardContent">
+                <!-- Content will be dynamically populated -->
+            </div>
+            <div class="flex justify-end space-x-4 pt-4">
+                <button type="button" id="closeViewBtn" class="px-6 py-2 rounded-lg text-gray-600 border border-gray-300 transition duration-200 hover:bg-gray-200">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message box for user notifications -->
+    <div id="messageBox" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white p-4 rounded-xl shadow-lg transform transition-transform duration-300 opacity-0 -translate-y-2 hidden">
+        Note added! Thanks for sharing.
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get DOM elements
+            const addNoteBtn = document.getElementById('addNoteBtn');
+            const noteModal = document.getElementById('noteModal');
+            const noteForm = document.getElementById('noteForm');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const gratitudeWall = document.getElementById('gratitudeWall');
+            const emptyMessage = document.getElementById('emptyMessage');
+            const viewModal = document.getElementById('viewModal');
+            const closeViewBtn = document.getElementById('closeViewBtn');
+            const messageBox = document.getElementById('messageBox');
+            
+            // Array to store all the gratitude notes
+            let notes = [];
+            
+            // Note: In a real-world application, this data would be stored in a database and a teacher dashboard would be used for moderation.
+            // For this demonstration, we'll store notes in an array and show them immediately.
+            // A "moderation" step is simulated with a console log.
+
+            // Define the card styles and their corresponding Tailwind classes
+            const cardStyles = {
+                'style1': ['bg-[--card-color-1]', 'text-cyan-900'],
+                'style2': ['bg-[--card-color-2]', 'text-green-900'],
+                'style3': ['bg-[--card-color-3]', 'text-yellow-900'],
+                'style4': ['bg-[--card-color-4]', 'text-pink-900'],
+                'style5': ['bg-[--card-color-5]', 'text-purple-900'],
+                'style6': ['bg-[--card-color-6]', 'text-red-900'],
+            };
+            
+            // An array to store the positions of existing cards to prevent overlap
+            let cardPositions = [];
+
+            // Helper function to show the modal with a smooth animation
+            const showModal = (modal) => {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            };
+
+            // Helper function to hide the modal with a smooth animation
+            const hideModal = (modal) => {
+                modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            };
+
+            // Function to generate a random position that does not overlap with existing cards
+            const getRandomPosition = (width, height) => {
+                let positionFound = false;
+                let newPos = {};
+                let attempts = 0;
+
+                // Loop until a non-overlapping position is found
+                while (!positionFound && attempts < 50) {
+                    // Get wall dimensions
+                    const wallRect = gratitudeWall.getBoundingClientRect();
+                    const wallWidth = wallRect.width;
+                    const wallHeight = Math.max(wallRect.height, window.innerHeight - 100);
+
+                    // Generate random coordinates
+                    newPos = {
+                        top: Math.random() * (wallHeight - height),
+                        left: Math.random() * (wallWidth - width)
+                    };
+
+                    // Check for overlap with existing cards
+                    let isOverlapping = false;
+                    for (const existingPos of cardPositions) {
+                        if (
+                            newPos.left < existingPos.left + existingPos.width &&
+                            newPos.left + width > existingPos.left &&
+                            newPos.top < existingPos.top + existingPos.height &&
+                            newPos.top + height > existingPos.top
+                        ) {
+                            isOverlapping = true;
+                            break;
+                        }
+                    }
+
+                    if (!isOverlapping) {
+                        positionFound = true;
+                    }
+                    attempts++;
+                }
+                
+                // If a position is found, add it to the positions array and return it
+                if (positionFound) {
+                    cardPositions.push({
+                        top: newPos.top,
+                        left: newPos.left,
+                        width: width,
+                        height: height
+                    });
+                    return newPos;
+                } else {
+                    // Fallback to a fixed position if a non-overlapping spot isn't found
+                    console.warn('Could not find a non-overlapping position, using a fallback.');
+                    return { top: Math.random() * 100, left: Math.random() * 100 };
+                }
+            };
+
+            // Function to render all notes on the wall
+            const renderNotes = () => {
+                // Clear the wall
+                gratitudeWall.innerHTML = '';
+                
+                if (notes.length > 0) {
+                    emptyMessage.classList.add('hidden');
+                } else {
+                    emptyMessage.classList.remove('hidden');
+                }
+                
+                // Loop through all notes and create their DOM elements
+                notes.forEach(note => {
+                    const card = document.createElement('div');
+                    card.id = `note-${note.id}`;
+                    card.classList.add(
+                        'gratitude-card',
+                        'bg-white',
+                        'rounded-3xl', /* Updated class */
+                        'p-4',
+                        'shadow-lg',
+                        'flex',
+                        'flex-col',
+                        'justify-between',
+                        'transform',
+                        'transition-transform',
+                        'duration-200',
+                        'hover:scale-110',
+                        'hover:rotate-1',
+                        'hover:z-10',
+                    );
+                    card.classList.add(...cardStyles[note.cardStyle]);
+
+                    // Apply the random position
+                    card.style.top = `${note.position.top}px`;
+                    card.style.left = `${note.position.left}px`;
+                    card.style.transform = `rotate(${Math.random() * 6 - 3}deg)`; // Apply a slight random rotation
+
+                    // Card content
+                    card.innerHTML = `
+                        <div>
+                            <h3 class="font-bold text-lg mb-1 line-clamp-2">${note.title}</h3>
+                            <p class="text-sm line-clamp-3">${note.body}</p>
+                        </div>
+                        <div class="mt-2 flex justify-between items-center text-xs">
+                            <span class="font-medium opacity-80">${note.author}</span>
+                            <div class="flex items-center space-x-1">
+                                <button class="like-button transform transition-transform" data-id="${note.id}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70 hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                </button>
+                                <span class="like-count" data-id="${note.id}">${note.likes}</span>
+                            </div>
+                        </div>
+                        <button class="absolute bottom-1 right-1 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" data-id="${note.id}" data-action="report">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </button>
+                    `;
+
+                    // Add click listeners to open the full view
+                    card.addEventListener('click', (event) => {
+                        // Don't open if the like or report button was clicked
+                        if (!event.target.closest('.like-button') && !event.target.closest('[data-action="report"]')) {
+                            viewNote(note);
+                        }
+                    });
+
+                    // Add event listener for the like button
+                    const likeButton = card.querySelector('.like-button');
+                    likeButton.addEventListener('click', (event) => {
+                        event.stopPropagation(); // Prevent the card click event from firing
+                        const noteId = likeButton.dataset.id;
+                        const noteToUpdate = notes.find(n => n.id === parseInt(noteId));
+                        if (noteToUpdate) {
+                            noteToUpdate.likes++;
+                            card.querySelector('.like-count').textContent = noteToUpdate.likes;
+                        }
+                    });
+
+                    // Add event listener for the report button
+                    const reportButton = card.querySelector('[data-action="report"]');
+                    reportButton.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        console.log(`Note with ID ${reportButton.dataset.id} has been reported. Awaiting teacher review.`);
+                        showMessage('Note has been reported.', true);
+                    });
+
+                    gratitudeWall.appendChild(card);
+                });
+            };
+
+            // Function to show the full note view modal
+            const viewNote = (note) => {
+                const viewCardContent = document.getElementById('viewCardContent');
+                viewCardContent.innerHTML = `
+                    <div class="${cardStyles[note.cardStyle].join(' ')} rounded-3xl p-6 mb-4 shadow-inner"> /* Updated class */
+                        <h3 class="font-bold text-2xl mb-2">${note.title}</h3>
+                        <p class="text-base">${note.body}</p>
+                    </div>
+                    <div class="flex justify-between items-center text-gray-400">
+                        <span class="font-medium">${note.author}</span>
+                        <div class="flex items-center space-x-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span>${note.likes}</span>
+                        </div>
+                    </div>
+                `;
+                showModal(viewModal);
+            };
+            
+            // Function to show a temporary message box
+            const showMessage = (text, isReport = false) => {
+                if (messageBox) {
+                    messageBox.textContent = text;
+                    if (isReport) {
+                        messageBox.classList.add('bg-red-700');
+                        messageBox.classList.remove('bg-blue-600');
+                    } else {
+                        messageBox.classList.remove('bg-red-700');
+                        messageBox.classList.add('bg-blue-600');
+                    }
+                    messageBox.classList.remove('hidden', 'opacity-0', '-translate-y-2');
+                    setTimeout(() => {
+                        messageBox.classList.add('opacity-0', '-translate-y-2');
+                        setTimeout(() => {
+                            messageBox.classList.add('hidden');
+                        }, 300);
+                    }, 3000);
+                }
+            };
+
+            // Event Listeners
+            addNoteBtn.addEventListener('click', () => {
+                showModal(noteModal);
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                hideModal(noteModal);
+                noteForm.reset();
+            });
+            
+            // Allow clicking the overlay to close the modal
+            noteModal.addEventListener('click', (event) => {
+                if (event.target === noteModal) {
+                    hideModal(noteModal);
+                    noteForm.reset();
+                }
+            });
+
+            closeViewBtn.addEventListener('click', () => {
+                hideModal(viewModal);
+            });
+            
+            // Allow clicking the overlay to close the modal
+            viewModal.addEventListener('click', (event) => {
+                if (event.target === viewModal) {
+                    hideModal(viewModal);
+                }
+            });
+
+            noteForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                try {
+                    const formData = new FormData(noteForm);
+                    const title = formData.get('title') || 'Untitled';
+                    const body = formData.get('body') || 'No description provided.';
+                    const author = formData.get('author') || 'Anonymous';
+                    const cardStyle = formData.get('cardStyle');
+    
+                    // Get a non-overlapping position
+                    const position = getRandomPosition(250, 180);
+    
+                    // Create a new note object
+                    const newNote = {
+                        id: Date.now(), // Use timestamp as a unique ID
+                        title,
+                        body,
+                        author,
+                        cardStyle,
+                        likes: 0,
+                        position
+                    };
+                    
+                    // Add note to our array and re-render the wall
+                    notes.push(newNote);
+                    renderNotes();
+    
+                    // Log a message to simulate the moderation process
+                    console.log(`New note submitted for moderation by ${author}. Awaiting teacher approval.`);
+    
+                    // Hide the modal and reset the form
+                    hideModal(noteModal);
+                    noteForm.reset();
+    
+                    // Show a brief success message
+                    showMessage('Your gratitude has been posted!');
+                } catch (e) {
+                    console.error("Error submitting note:", e);
+                    showMessage("Oops! Something went wrong. Please try again.", true);
+                }
+            });
+            
+            // Initial render
+            renderNotes();
+        });
+    </script>
+</body>
+</html>

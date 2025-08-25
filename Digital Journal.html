@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Digital Journal</title>
+    <!-- Google Fonts: Inter for a clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* A calming and visually appealing background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            color: #1f2937; /* Dark Gray */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        /* Container for all content with a subtle background */
+        #journal-container {
+            width: 100%;
+            max-width: 960px;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-height: 80vh;
+        }
+        
+        /* Main heading style */
+        .journal-heading {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c; /* Dark Slate Blue */
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* The daily prompt area */
+        .prompt-area {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: #2d3748; /* Darker Gray */
+            flex-grow: 1; /* Allows it to take up available space */
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Journaling text area */
+        #journal-entry {
+            width: 100%;
+            padding: 1.5rem;
+            background-color: #f9fafb; /* Light Gray */
+            border: 1px solid #d1d5db; /* Light border */
+            border-radius: 1rem;
+            font-size: 1rem;
+            line-height: 1.75;
+            resize: vertical;
+            min-height: 200px;
+            transition: all 0.3s ease;
+        }
+        #journal-entry:focus {
+            outline: none;
+            border-color: #3f51b5; /* Deeper Blue */
+            box-shadow: 0 0 0 4px rgba(63, 81, 181, 0.3);
+            background-color: #ffffff;
+        }
+
+        /* Mood meter and counter container */
+        .interactive-elements {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Mood meter styling */
+        .mood-meter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .mood-meter label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .mood-meter input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(to right, #ef4444, #f59e0b, #34d399); /* Red to Yellow to Green */
+            border-radius: 9999px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .mood-meter input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .mood-meter input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+        .mood-meter-indicator {
+            font-size: 2.5rem;
+        }
+
+        /* Word count styling */
+        .word-count {
+            text-align: right;
+            font-size: 0.875rem;
+            color: #6b7280; /* Gray */
+            margin-top: 0.5rem;
+        }
+        
+        /* Button group container */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Main button styling */
+        .journal-btn {
+            padding: 0.85rem 2.5rem;
+            background-image: linear-gradient(45deg, #4f46e5, #3f51b5);
+            color: white;
+            font-weight: 600;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .journal-btn:hover {
+            background-image: linear-gradient(45deg, #3f51b5, #4f46e5);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .journal-btn:active {
+            transform: translateY(0);
+        }
+        .journal-btn:disabled {
+            background-image: none;
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        /* Save message animation and mood message */
+        #message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            padding: 1.5rem 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-size: 1.5rem;
+            font-weight: 600;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+            z-index: 10;
+            text-align: center;
+        }
+        #message-box.show-green {
+            background-color: #34d399; /* Green */
+            opacity: 1;
+            visibility: visible;
+        }
+        #message-box.show-blue {
+            background-color: #60a5fa; /* Blue */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive layout for smaller screens */
+        @media (max-width: 768px) {
+            #journal-container {
+                padding: 1.5rem;
+            }
+            .journal-heading {
+                font-size: 2rem;
+            }
+            .prompt-area {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body id="journal-body">
+
+    <div id="journal-container" class="rounded-3xl shadow-xl flex flex-col items-center">
+        <h1 class="journal-heading" id="journal-title">Your Digital Journal</h1>
+
+        <div class="prompt-area text-center mb-6">
+            <p id="daily-prompt"></p>
+        </div>
+
+        <textarea id="journal-entry" placeholder="Start writing here..."></textarea>
+        <div class="word-count">
+            <span id="word-counter">0 words</span>
+        </div>
+
+        <div class="interactive-elements w-full">
+            <div class="mood-meter flex items-center justify-between">
+                <label for="mood-slider">Mood Meter:</label>
+                <input type="range" id="mood-slider" min="0" max="4" value="2" step="1" class="w-2/3">
+                <span id="mood-indicator" class="text-3xl">😊</span>
+            </div>
+        </div>
+        
+        <div class="button-group mt-4">
+            <button id="copy-btn" class="journal-btn">Copy Entry 📋</button>
+            <button id="analyze-mood-btn" class="journal-btn">Analyze Mood ✨</button>
+        </div>
+    </div>
+
+    <div id="message-box"></div>
+
+    <script>
+        // A much larger array of prompts for variety
+        const prompts = [
+            "If your emotions were colors today, what would they be and why?",
+            "What's one small act of kindness you witnessed or performed? How did it make you feel?",
+            "Write a short letter to your future self. What advice would you give based on today's experiences?",
+            "What is a personal success, no matter how small, that you're proud of from today?",
+            "If you could have a conversation with any historical figure, who would it be and what would you ask them?",
+            "Describe a place where you feel most at peace. What does it look like, sound like, and feel like?",
+            "What is a challenge you faced today, and how did you approach it?",
+            "Write about a song that perfectly captures your current mood. Why does it resonate with you?",
+            "What's one thing you are grateful for today?",
+            "What is a new idea or thought you had today? How did it come to you?",
+            "What is a fear you've recently conquered, or one you're working on conquering?",
+            "If you could be the main character in any book, movie, or video game, who would you choose and why?",
+            "What's a piece of advice you've received that has stuck with you?",
+            "Describe a time you felt truly courageous. What happened?",
+            "If your life had a theme song, what would it be right now?",
+            "What is a hobby or skill you'd like to learn, and why?",
+            "Write about a person who has inspired you. What qualities do you admire about them?",
+            "What does 'success' mean to you, and how has that definition changed over time?",
+            "If you could travel anywhere in the world, where would you go and what would you do?",
+            "What is one thing you can do for yourself tomorrow that will make you happy?",
+            "Describe the best compliment you've ever received. Why did it mean so much to you?",
+            "What is a goal you're working toward, and what is one small step you can take today to get closer to it?",
+            "If you could invent one thing to make the world a better place, what would it be?",
+            "What is a mistake you made recently, and what did you learn from it?",
+            "Write about a memory that always makes you smile.",
+        ];
+
+        // URLs for new, visually appealing backgrounds
+        const backgrounds = [
+            'https://images.unsplash.com/photo-1549490349-f9f30349a43a?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1080&fit=crop',
+            'https://images.unsplash.com/photo-1579547621171-87c12660a996?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1080&fit=crop',
+            'https://images.unsplash.com/photo-1522880757962-d41f3e792a14?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1080&fit=crop',
+            'https://images.unsplash.com/photo-1509315570087-9b2f27560e25?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1080&fit=crop',
+            'https://images.unsplash.com/photo-1533100657906-81c8152e032d?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1920&h=1080&fit=crop'
+        ];
+
+        // Mood indicator emojis based on the slider value
+        const moodEmojis = ["😔", "😕", "😊", "�", "🤩"];
+
+        // Get elements from the DOM
+        const body = document.getElementById('journal-body');
+        const promptEl = document.getElementById('daily-prompt');
+        const journalEntryEl = document.getElementById('journal-entry');
+        const moodSlider = document.getElementById('mood-slider');
+        const moodIndicator = document.getElementById('mood-indicator');
+        const copyBtn = document.getElementById('copy-btn');
+        const analyzeMoodBtn = document.getElementById('analyze-mood-btn');
+        const messageBox = document.getElementById('message-box');
+        const wordCounter = document.getElementById('word-counter');
+
+        // Function to set the daily content with a random prompt and background
+        function setRandomContent() {
+            // Get a random index for prompts and backgrounds
+            const promptIndex = Math.floor(Math.random() * prompts.length);
+            const bgIndex = Math.floor(Math.random() * backgrounds.length);
+
+            promptEl.textContent = prompts[promptIndex];
+            body.style.backgroundImage = `url('${backgrounds[bgIndex]}')`;
+
+            // Clear the entry and reset mood on a new session (not just a page reload)
+            // Or you can load a saved entry if you want persistence
+            journalEntryEl.value = '';
+            moodSlider.value = 2; // Reset to neutral
+            updateMoodIndicator();
+            updateWordCounter();
+        }
+
+        // Function to update the mood emoji based on the slider value
+        function updateMoodIndicator() {
+            const index = parseInt(moodSlider.value, 10);
+            moodIndicator.textContent = moodEmojis[index];
+        }
+
+        // Function to update the word counter
+        function updateWordCounter() {
+            const text = journalEntryEl.value;
+            const words = text.trim().split(/\s+/).filter(Boolean);
+            wordCounter.textContent = `${words.length} words`;
+        }
+        
+        // Utility function for exponential backoff
+        async function fetchWithExponentialBackoff(url, options, maxRetries = 5, delay = 1000) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.status === 429 && i < maxRetries - 1) { // 429 Too Many Requests
+                        console.log(`Rate limit exceeded. Retrying in ${delay / 1000} seconds...`);
+                        await new Promise(res => setTimeout(res, delay));
+                        delay *= 2; // Exponential increase
+                        continue;
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+            throw new Error('Max retries exceeded');
+        }
+
+        // Function to analyze mood using the Gemini API
+        async function analyzeMood() {
+            const entryText = journalEntryEl.value;
+            if (entryText.trim() === '') {
+                // Use a modal for user-facing messages, not alert()
+                showMessage('Please write something first!', 'blue');
+                return;
+            }
+
+            showMessage('Analyzing...', 'blue');
+            analyzeMoodBtn.disabled = true;
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            const prompt = `Analyze the sentiment of the following journal entry text and provide a single integer score from 0 to 4, where 0 is very negative, 1 is negative, 2 is neutral, 3 is positive, and 4 is very positive. Only return the integer.
+            Text: "${entryText}"
+            Integer Mood Score (0-4):`;
+
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { 
+                contents: chatHistory,
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "mood_score": {
+                                "type": "INTEGER"
+                            }
+                        },
+                        "propertyOrdering": ["mood_score"]
+                    }
+                }
+            };
+            
+            try {
+                const response = await fetchWithExponentialBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const json = result.candidates[0].content.parts[0].text;
+                    const parsedJson = JSON.parse(json);
+                    
+                    const moodScore = parsedJson.mood_score;
+                    if (moodScore >= 0 && moodScore <= 4) {
+                        moodSlider.value = moodScore;
+                        updateMoodIndicator();
+                        showMessage('Mood set!', 'green');
+                    } else {
+                        showMessage('Could not determine mood. Try again.', 'blue');
+                    }
+                } else {
+                    showMessage('Sorry, I couldn\'t analyze the mood at this time. Please try again.', 'blue');
+                }
+
+            } catch (error) {
+                console.error('Error analyzing mood:', error);
+                showMessage('Oops! Something went wrong. Try again.', 'blue');
+            } finally {
+                analyzeMoodBtn.disabled = false;
+            }
+        }
+        
+        function showMessage(text, type) {
+            messageBox.textContent = text;
+            messageBox.classList.remove('show-green', 'show-blue');
+            messageBox.classList.add(`show-${type}`);
+            setTimeout(() => {
+                messageBox.classList.remove(`show-${type}`);
+            }, 2000);
+        }
+
+        // Function to copy the journal entry text to the clipboard
+        function copyToClipboard() {
+            const entryText = journalEntryEl.value;
+            if (entryText.trim() === '') {
+                showMessage('Nothing to copy!', 'blue');
+                return;
+            }
+            // Create a temporary textarea to hold the text
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = entryText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            // Use execCommand for broader browser support
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            showMessage('Copied to clipboard!', 'green');
+        }
+
+        // Event listener for the mood slider
+        moodSlider.addEventListener('input', updateMoodIndicator);
+        
+        // Event listener for the journal entry for word count
+        journalEntryEl.addEventListener('input', updateWordCounter);
+
+        // Event listener for the new copy button
+        copyBtn.addEventListener('click', copyToClipboard);
+        
+        // Event listener for the new analyze mood button
+        analyzeMoodBtn.addEventListener('click', analyzeMood);
+
+        // Initialize the page content and functionality
+        setRandomContent();
+        updateWordCounter();
+        updateMoodIndicator();
+    </script>
+</body>
+</html>
+�
