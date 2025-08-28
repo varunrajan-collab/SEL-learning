@@ -69,9 +69,62 @@
             opacity: 1;
         }
         
+        /* Welcome modal styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        .welcome-modal-content {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            margin: 1rem;
+            transform: scale(1);
+            transition: transform 0.3s ease-out;
+            animation: bounceIn 0.5s forwards;
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="p-8 md:p-12 lg:p-16 flex flex-col items-center justify-center min-h-screen">
+
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Feelings Explorer</h1>
+            <p class="text-lg text-gray-700 mb-6">
+                Welcome to the Feelings Explorer! This activity is designed to help you build <strong>self-awareness</strong> and <strong>emotional literacy</strong>.
+                <br><br>
+                Learning to accurately name our feelings is a crucial step in understanding ourselves. This tool helps you move from a broad sense of emotion to a specific word, and then offers space to reflect on what's causing that feeling. By connecting the word to the experience, you strengthen your ability to understand and communicate your internal world.
+            </p>
+            <button onclick="closeWelcomeModal()" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-full hover:bg-indigo-600 transition-colors">Begin Exploring</button>
+        </div>
+    </div>
 
     <!-- Main container for the app sections -->
     <div class="max-w-4xl w-full p-8 bg-white rounded-2xl shadow-xl flex flex-col items-center text-center">
@@ -419,6 +472,18 @@
             // Display the reflection
             reflectionResponseDiv.textContent = randomReflection;
         }
+        
+        // Function to close the welcome modal
+        const closeWelcomeModal = () => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            welcomeModal.style.animation = 'none';
+            welcomeModal.style.transform = 'scale(0.8)';
+            welcomeModal.style.opacity = '0';
+            setTimeout(() => {
+                welcomeModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling if disabled
+            }, 300);
+        };
     </script>
 </body>
 </html>
