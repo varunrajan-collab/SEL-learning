@@ -14,9 +14,64 @@
             background: linear-gradient(135deg, #e0f2fe 0%, #d1e5f8 50%, #c2d9f0 100%);
             transition: background 0.5s ease-in-out;
         }
+        
+        /* Welcome modal styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        .welcome-modal-content {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            margin: 1rem;
+            transform: scale(1);
+            transition: transform 0.3s ease-out;
+            animation: bounceIn 0.5s forwards;
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Social Scenarios: Choose Your Adventure</h1>
+            <p class="text-lg text-gray-700 mb-6">
+                Welcome! This is an interactive experience designed to help you practice <strong>responsible decision-making</strong> and <strong>social awareness</strong>.
+                <br><br>
+                Every day, we face choices that affect ourselves and others. This activity presents you with realistic scenarios and asks you to choose how you would respond. There is no single "right" answer, but by reflecting on the outcomes of your choices, you'll develop a stronger ability to consider different perspectives and make thoughtful, ethical decisions in your own life.
+            </p>
+            <button onclick="closeWelcomeModal()" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-full hover:bg-indigo-600 transition-colors">Start Scenario</button>
+        </div>
+    </div>
+    
     <div id="game-container" class="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full text-center sm:p-12 md:p-16 border-4 border-white transform transition-transform duration-300 hover:scale-105">
         <h1 id="game-title" class="text-3xl sm:text-4xl font-bold mb-4 text-gray-800"></h1>
         <p id="game-text" class="text-base sm:text-lg mb-8 text-gray-600 leading-relaxed"></p>
@@ -88,17 +143,17 @@
                 },
                 reflection_help: {
                     title: "Key Takeaways",
-                    text: "Your choice to offer tangible help shows the power of **supportive action**. Sometimes, a person needs more than just a conversation—they need an ally to help them tackle a problem directly. This strengthens your friendship and solves the immediate issue.",
+                    text: "Your choice to offer tangible help shows the power of <strong>supportive action</strong>. Sometimes, a person needs more than just a conversation—they need an ally to help them tackle a problem directly. This strengthens your friendship and solves the immediate issue.",
                     choices: []
                 },
                 reflection_suggest: {
                     title: "Key Takeaways",
-                    text: "By suggesting a break, you've modeled **constructive problem-solving**. You helped Alex find a practical way to manage their stress and set a healthy boundary with technology. This is a valuable skill for digital well-being.",
+                    text: "By suggesting a break, you've modeled <strong>constructive problem-solving</strong>. You helped Alex find a practical way to manage their stress and set a healthy boundary with technology. This is a valuable skill for digital well-being.",
                     choices: []
                 },
                 reflection_listen: {
                     title: "Key Takeaways",
-                    text: "Your choice to listen demonstrates **empathy and active listening**. You didn't try to fix Alex's problems, you simply provided a safe space for them to be heard. This can be the most valuable form of support, as it validates a person's feelings and builds trust.",
+                    text: "Your choice to listen demonstrates <strong>empathy and active listening</strong>. You didn't try to fix Alex's problems, you simply provided a safe space for them to be heard. This can be the most valuable form of support, as it validates a person's feelings and builds trust.",
                     choices: []
                 }
             },
@@ -136,7 +191,7 @@
                 },
                 reflection_pullAside: {
                     title: "Key Takeaways",
-                    text: "Your choice to pull Jordan aside demonstrates **creative problem-solving** and **discreet support**. You helped your friend escape a difficult situation without causing a bigger scene, which can be an effective strategy when someone is feeling pressured.",
+                    text: "Your choice to pull Jordan aside demonstrates <strong>creative problem-solving</strong> and <strong>discreet support</strong>. You helped your friend escape a difficult situation without causing a bigger scene, which can be an effective strategy when someone is feeling pressured.",
                     choices: []
                 }
             },
@@ -174,12 +229,12 @@
                 },
                 reflection_sayNo: {
                     title: "Key Takeaways",
-                    text: "Your choice shows **integrity and constructive honesty**. By setting a clear boundary, you protected your own values while still offering support. It's a reminder that true friendship is built on mutual respect and honesty, not on taking shortcuts.",
+                    text: "Your choice shows <strong>integrity and constructive honesty</strong>. By setting a clear boundary, you protected your own values while still offering support. It's a reminder that true friendship is built on mutual respect and honesty, not on taking shortcuts.",
                     choices: []
                 },
                 reflection_offerToHelp: {
                     title: "Key Takeaways",
-                    text: "By offering to help Sam study, you demonstrated **proactive support**. You addressed the root cause of their problem (being unprepared) rather than just enabling a bad choice. This is an example of being a true and supportive friend.",
+                    text: "By offering to help Sam study, you demonstrated <strong>proactive support</strong>. You addressed the root cause of their problem (being unprepared) rather than just enabling a bad choice. This is an example of being a true and supportive friend.",
                     choices: []
                 }
             },
@@ -217,12 +272,12 @@
                 },
                 reflection_defendDirectly: {
                     title: "Key Takeaways",
-                    text: "Your choice to directly intervene demonstrates **courage and loyalty**. You stood up for your friend even when it was uncomfortable, which is a powerful way to stop a problem like a rumor from growing. This shows you are a true and reliable friend.",
+                    text: "Your choice to directly intervene demonstrates <strong>courage and loyalty</strong>. You stood up for your friend even when it was uncomfortable, which is a powerful way to stop a problem like a rumor from growing. This shows you are a true and reliable friend.",
                     choices: []
                 },
                 reflection_tellMaria: {
                     title: "Key Takeaways",
-                    text: "By telling Maria, you are showing **honesty and trust**. You gave your friend the information she needed to handle a difficult situation on her own terms. It's important to remember to be a compassionate and supportive presence after you deliver difficult news.",
+                    text: "By telling Maria, you are showing <strong>honesty and trust</strong>. You gave your friend the information she needed to handle a difficult situation on her own terms. It's important to remember to be a compassionate and supportive presence after you deliver difficult news.",
                     choices: []
                 }
             },
@@ -268,19 +323,19 @@
                 },
                 splitWork: {
                     title: "Changing the Strategy",
-                    text: "You and Leo talk to the other members of the group and decide to change the work distribution. Leo is given a part of the project that he's better at, and he finishes it quickly. This shows that **teamwork** is about finding solutions that work for everyone.",
+                    text: "You and Leo talk to the other members of the group and decide to change the work distribution. Leo is given a part of the project that he's better at, and he finishes it quickly. This shows that <strong>teamwork</strong> is about finding solutions that work for everyone.",
                     choices: [
                         { label: "See the key takeaways", nextState: 'reflection_splitWork' }
                     ]
                 },
                 reflection_helpLeo: {
                     title: "Key Takeaways",
-                    text: "Your choice to help Leo demonstrates **leadership and compassion**. Instead of just looking out for yourself, you helped a struggling teammate, which not only saved the project but also built a stronger relationship. It's a reminder that everyone needs help sometimes.",
+                    text: "Your choice to help Leo demonstrates <strong>leadership and compassion</strong>. Instead of just looking out for yourself, you helped a struggling teammate, which not only saved the project but also built a stronger relationship. It's a reminder that everyone needs help sometimes.",
                     choices: []
                 },
                 reflection_splitWork: {
                     title: "Key Takeaways",
-                    text: "By being flexible, you showed the importance of **collaboration**. A good team adapts to its members' strengths and weaknesses. Finding a solution that works for everyone is a key part of group dynamics and project success.",
+                    text: "By being flexible, you showed the importance of <strong>collaboration</strong>. A good team adapts to its members' strengths and weaknesses. Finding a solution that works for everyone is a key part of group dynamics and project success.",
                     choices: []
                 }
             },
@@ -318,7 +373,7 @@
                 },
                 reflection_encourageHonesty: {
                     title: "Key Takeaways",
-                    text: "Your choice shows **leadership and responsibility**. Instead of helping your sibling hide a mistake, you guided her to a more mature and honest solution. By offering to be there for her, you strengthened your bond and taught a valuable lesson about integrity.",
+                    text: "Your choice shows <strong>leadership and responsibility</strong>. Instead of helping your sibling hide a mistake, you guided her to a more mature and honest solution. By offering to be there for her, you strengthened your bond and taught a valuable lesson about integrity.",
                     choices: []
                 }
             },
@@ -356,7 +411,7 @@
                 },
                 reflection_privateMessage: {
                     title: "Key Takeaways",
-                    text: "Your choice to send a private message shows **constructive criticism and empathy**. By addressing the issue in private, you gave your friend the chance to correct their mistake without feeling publicly attacked. It's a key skill for handling sensitive social situations.",
+                    text: "Your choice to send a private message shows <strong>constructive criticism and empathy</strong>. By addressing the issue in private, you gave your friend the chance to correct their mistake without feeling publicly attacked. It's a key skill for handling sensitive social situations.",
                     choices: []
                 }
             },
@@ -394,11 +449,10 @@
                 },
                 reflection_tellCoach: {
                     title: "Key Takeaways",
-                    text: "Your choice shows **integrity and loyalty to the team**. By telling the truth, you prioritized the well-being and success of the entire team over a short-term friendship. A true friend understands that sometimes doing the right thing for them means doing something difficult.",
+                    text: "Your choice shows <strong>integrity and loyalty to the team</strong>. By telling the truth, you prioritized the well-being and success of the entire team over a short-term friendship. A true friend understands that sometimes doing the right thing for them means doing something difficult.",
                     choices: []
                 }
             }
-            // Add more scenarios here to reach the requested 20+ instances
         ];
 
         let gameStates;
@@ -445,6 +499,24 @@
             gameStates = allScenarios[randomIndex];
             renderState(gameStates.start);
         };
+        
+        // Function to close the welcome modal
+        const closeWelcomeModal = () => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            welcomeModal.style.animation = 'none';
+            welcomeModal.style.transform = 'scale(0.8)';
+            welcomeModal.style.opacity = '0';
+            setTimeout(() => {
+                welcomeModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling if disabled
+            }, 300);
+        };
+        
+        // Show the welcome modal on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            welcomeModal.style.display = 'flex';
+        });
     </script>
 </body>
 </html>
