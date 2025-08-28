@@ -39,7 +39,7 @@
             gap: 2rem;
             min-height: 80vh;
         }
-        
+                
         /* Main heading style */
         .journal-heading {
             text-align: center;
@@ -133,7 +133,7 @@
             color: #6b7280; /* Gray */
             margin-top: 0.5rem;
         }
-        
+                
         /* Button group container */
         .button-group {
             display: flex;
@@ -169,7 +169,7 @@
             box-shadow: none;
             transform: none;
         }
-        
+                
         /* Save message animation and mood message */
         #message-box {
             position: fixed;
@@ -198,6 +198,47 @@
             opacity: 1;
             visibility: visible;
         }
+        
+        /* Welcome modal styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        .welcome-modal-content {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            margin: 1rem;
+            transform: scale(1);
+            transition: transform 0.3s ease-out;
+            animation: bounceIn 0.5s forwards;
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
 
         /* Responsive layout for smaller screens */
         @media (max-width: 768px) {
@@ -214,7 +255,19 @@
     </style>
 </head>
 <body id="journal-body">
-
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Your Digital Journal</h1>
+            <p class="text-lg text-gray-700 mb-6">
+                Welcome to your journal! This activity is designed to help you practice <strong>self-management</strong> by building the skill of <strong>emotional regulation</strong>.
+                <br><br>
+                Journaling is a powerful tool to process your feelings. By writing them down, you create space between your emotions and your reactions. This helps you to better understand what you're feeling and respond thoughtfully, rather than reacting impulsively.
+            </p>
+            <button onclick="closeWelcomeModal()" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-full hover:bg-indigo-600 transition-colors">Begin Journaling</button>
+        </div>
+    </div>
+    
     <div id="journal-container" class="rounded-3xl shadow-xl flex flex-col items-center">
         <h1 class="journal-heading" id="journal-title">Your Digital Journal</h1>
 
@@ -283,7 +336,7 @@
         ];
 
         // Mood indicator emojis based on the slider value
-        const moodEmojis = ["😔", "😕", "😊", "�", "🤩"];
+        const moodEmojis = ["😔", "😕", "😊", "😀", "🤩"];
 
         // Get elements from the DOM
         const body = document.getElementById('journal-body');
@@ -365,7 +418,6 @@
             const prompt = `Analyze the sentiment of the following journal entry text and provide a single integer score from 0 to 4, where 0 is very negative, 1 is negative, 2 is neutral, 3 is positive, and 4 is very positive. Only return the integer.
             Text: "${entryText}"
             Integer Mood Score (0-4):`;
-
             const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
                 contents: chatHistory,
@@ -417,7 +469,7 @@
                 analyzeMoodBtn.disabled = false;
             }
         }
-        
+
         function showMessage(text, type) {
             messageBox.textContent = text;
             messageBox.classList.remove('show-green', 'show-blue');
@@ -457,6 +509,18 @@
         // Event listener for the new analyze mood button
         analyzeMoodBtn.addEventListener('click', analyzeMood);
 
+        // Function to close the welcome modal
+        const closeWelcomeModal = () => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            welcomeModal.style.animation = 'none';
+            welcomeModal.style.transform = 'scale(0.8)';
+            welcomeModal.style.opacity = '0';
+            setTimeout(() => {
+                welcomeModal.style.display = 'none';
+                document.body.style.overflow = 'auto'; // Re-enable scrolling if disabled
+            }, 300);
+        };
+
         // Initialize the page content and functionality
         setRandomContent();
         updateWordCounter();
@@ -464,4 +528,3 @@
     </script>
 </body>
 </html>
-�
