@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellar Resilience</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General body styling for a cosmic theme with a starfield */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0c1b;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 1px, transparent 1px), radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 100px 100px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        /* Container for the control panel at the top */
+        .controls-container {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        /* The main game area, a circular "cosmic field" */
+        .cosmic-field {
+            position: relative;
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 600px;
+            max-height: 600px;
+            border-radius: 50%;
+            border: 2px dashed rgba(186, 230, 253, 0.2);
+            box-shadow: 0 0 40px rgba(186, 230, 253, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(11, 12, 27, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        /* Central challenge vortex styling */
+        .challenge-vortex {
+            font-size: 5rem;
+            color: #ef4444;
+            animation: pulse-glow 3s infinite ease-in-out;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.6));
+        }
+        
+        /* The glow animation for the vortex */
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                filter: brightness(1) drop-shadow(0 0 10px rgba(239, 68, 68, 0.6));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: brightness(1.2) drop-shadow(0 0 20px rgba(252, 165, 165, 0.8));
+            }
+        }
+        
+        /* Styling for the draggable support planets */
+        .support-planet {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: grab;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+            filter: blur(0.5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* Planet hover effect with a more prominent glow */
+        .support-planet:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(186, 230, 253, 1);
+            cursor: grabbing;
+        }
+
+        /* Class for the currently dragged item to bring it to the front */
+        .support-planet.active {
+            z-index: 10;
+        }
+
+        /* Icons and text inside the planets */
+        .planet-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 5px #fff;
+        }
+        
+        .planet-text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #d1d5db;
+        }
+
+        /* Add colors to different planets */
+        .planet-blue {
+            background: radial-gradient(circle, #3b82f6, #1e40af);
+        }
+
+        .planet-green {
+            background: radial-gradient(circle, #22c55e, #15803d);
+        }
+
+        .planet-purple {
+            background: radial-gradient(circle, #a855f7, #6b21a8);
+        }
+        
+        .planet-red {
+            background: radial-gradient(circle, #ef4444, #991b1b);
+        }
+
+        .planet-yellow {
+            background: radial-gradient(circle, #facc15, #a16207);
+        }
+
+        /* Responsive styling for smaller screens */
+        @media (max-width: 768px) {
+            .cosmic-field {
+                width: 95vmin;
+                height: 95vmin;
+            }
+            .challenge-vortex {
+                font-size: 4rem;
+            }
+            .support-planet {
+                width: 80px;
+                height: 80px;
+            }
+            .planet-icon {
+                font-size: 2rem;
+            }
+            .planet-text {
+                font-size: 0.7rem;
+            }
+            .controls-container {
+                position: relative;
+                top: auto;
+                transform: none;
+                margin-top: 2rem;
+                margin-bottom: 1rem;
+            }
+        }
+        /* Welcome modal styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        .welcome-modal-content {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            margin: 1rem;
+            transform: scale(1);
+            transition: transform 0.3s ease-out;
+            animation: bounceIn 0.5s forwards;
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Stellar Resilience</h1>
+            <p class="text-lg text-gray-700 mb-6">
+                Welcome to Stellar Resilience! This activity is a visual metaphor for building <strong>resilience</strong> and strengthening your <strong>self-management</strong> skills.
+                <br><br>
+                The red vortex in the center represents a challenge or stressor in your life. The planets you create represent your personal support system—your friends, family, hobbies, and coping strategies. By dragging your support planets towards the central vortex, you are symbolically gathering your strength and resources to meet the challenge head-on. This exercise helps you visualize and practice leaning on your support system to navigate difficult feelings.
+            </p>
+            <button onclick="closeWelcomeModal()" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-full hover:bg-indigo-600 transition-colors">Begin the Journey</button>
+        </div>
+    </div>
+    
+    <div class="controls-container p-4 bg-gray-900 rounded-xl shadow-2xl border border-gray-700">
+        <h1 class="text-xl font-bold text-center mb-4 text-sky-300">Stellar Resilience</h1>
+        <div class="flex flex-col items-center mb-4">
+            <label for="challenge-input" class="text-sm font-medium mb-2 text-red-400">The Challenge Nebula:</label>
+            <input type="text" id="challenge-input" placeholder="e.g., Public Speaking Anxiety" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-red-500">
+        </div>
+        <div class="flex flex-col items-center">
+            <label for="support-input" class="text-sm font-medium mb-2 text-green-400">My Guiding Stars:</label>
+            <div class="flex w-full space-x-2">
+                <input type="text" id="support-input" placeholder="e.g., My family, Coach, Best friend" class="flex-1 p-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button id="add-support-btn" class="px-4 py-2 bg-sky-500 hover:bg-sky-600 transition-colors rounded-lg font-bold text-white">Add</button>
+            </div>
+            <button id="reset-btn" class="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 transition-colors rounded-lg font-bold text-white">Reset Universe</button>
+        </div>
+    </div>
+    
+    <div class="cosmic-field relative">
+        <!-- Central Challenge Vortex -->
+        <div id="challenge-center" class="challenge-vortex flex items-center justify-center z-10">
+            <i class="fas fa-meteor"></i>
+        </div>
+    </div>
+
+    <script>
+        // Array of different colors/themes for the planets
+        const planetColors = ['planet-blue', 'planet-green', 'planet-purple', 'planet-red', 'planet-yellow'];
+        let colorIndex = 0;
+
+        const challengeInput = document.getElementById('challenge-input');
+        const supportInput = document.getElementById('support-input');
+        const addSupportBtn = document.getElementById('add-support-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const challengeCenter = document.getElementById('challenge-center');
+        const mapContainer = document.querySelector('.cosmic-field');
+
+        let activeItem = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Function to create a new support planet element
+        function createSupportPlanet(name) {
+            const bubble = document.createElement('div');
+            // Assign a new color from the array for each new bubble
+            const newColor = planetColors[colorIndex % planetColors.length];
+            bubble.className = `support-planet ${newColor} transition-colors`;
+            bubble.innerHTML = `
+                <div class="planet-icon"><i class="fas fa-star text-white"></i></div>
+                <div class="planet-text text-white">${name}</div>
+            `;
+            
+            // Generate random positions within the container
+            const x = Math.random() * (mapContainer.clientWidth * 0.8) - (mapContainer.clientWidth * 0.4);
+            const y = Math.random() * (mapContainer.clientHeight * 0.8) - (mapContainer.clientHeight * 0.4);
+            bubble.style.transform = `translate(${x}px, ${y}px)`;
+
+            // Add event listeners for the new planet
+            bubble.addEventListener('mousedown', dragStart);
+            bubble.addEventListener('touchstart', dragStart);
+
+            colorIndex++; // Increment the color index for the next planet
+            return bubble;
+        }
+
+        // Add support planet from input
+        addSupportBtn.addEventListener('click', () => {
+            const supportName = supportInput.value.trim();
+            if (supportName) {
+                const newBubble = createSupportPlanet(supportName);
+                mapContainer.appendChild(newBubble);
+                supportInput.value = ''; // Clear the input field
+            }
+        });
+
+        // Update challenge text/icon
+        challengeInput.addEventListener('input', () => {
+            if (challengeInput.value.trim() === '') {
+                challengeCenter.innerHTML = '<i class="fas fa-meteor"></i>';
+            } else {
+                challengeCenter.innerHTML = `<span class="text-xl font-bold text-center text-red-400">${challengeInput.value}</span>`;
+            }
+        });
+
+        // Reset the map
+        resetBtn.addEventListener('click', () => {
+            document.querySelectorAll('.support-planet').forEach(bubble => bubble.remove());
+            challengeInput.value = '';
+            challengeCenter.innerHTML = '<i class="fas fa-meteor"></i>';
+            colorIndex = 0; // Reset color index
+        });
+
+        // Function to handle the start of the drag
+        function dragStart(e) {
+            e.preventDefault();
+            activeItem = e.currentTarget;
+            activeItem.classList.add('active');
+
+            const isTouchEvent = e.type === 'touchstart';
+            const clientX = isTouchEvent ? e.touches[0].clientX : e.clientX;
+            const clientY = isTouchEvent ? e.touches[0].clientY : e.clientY;
+
+            const rect = activeItem.getBoundingClientRect();
+            offsetX = clientX - rect.left;
+            offsetY = clientY - rect.top;
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        // Function to handle the drag movement
+        function drag(e) {
+            if (!activeItem) return;
+
+            e.preventDefault();
+
+            const isTouchEvent = e.type === 'touchmove';
+            const clientX = isTouchEvent ? e.touches[0].clientX : e.clientX;
+            const clientY = isTouchEvent ? e.touches[0].clientY : e.clientY;
+
+            const newX = clientX - offsetX;
+            const newY = clientY - offsetY;
+
+            const mapRect = mapContainer.getBoundingClientRect();
+            
+            const relativeX = newX - mapRect.left + (activeItem.clientWidth / 2);
+            const relativeY = newY - mapRect.top + (activeItem.clientHeight / 2);
+
+            const centerX = mapRect.width / 2;
+            const centerY = mapRect.height / 2;
+            const distFromCenter = Math.sqrt(Math.pow(relativeX - centerX, 2) + Math.pow(relativeY - centerY, 2));
+
+            const radius = mapRect.width / 2 - (activeItem.clientWidth / 2) - 5;
+            
+            if (distFromCenter <= radius) {
+                activeItem.style.transform = `translate(${newX - mapRect.left}px, ${newY - mapRect.top}px)`;
+            } else {
+                const angle = Math.atan2(relativeY - centerY, relativeX - centerX);
+                const constrainedX = centerX + radius * Math.cos(angle);
+                const constrainedY = centerY + radius * Math.sin(angle);
+                activeItem.style.transform = `translate(${constrainedX - activeItem.clientWidth / 2}px, ${constrainedY - activeItem.clientHeight / 2}px)`;
+            }
+        }
+
+        // Function to handle the drag release
+        function dragEnd() {
+            if (!activeItem) return;
+            activeItem.classList.remove('active');
+            activeItem = null;
+
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', dragEnd);
+        }
+
+        // Function to close the welcome modal
+        const closeWelcomeModal = () => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            welcomeModal.style.animation = 'none';
+            welcomeModal.style.transform = 'scale(0.8)';
+            welcomeModal.style.opacity = '0';
+            setTimeout(() => {
+                welcomeModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        };
+        
+        // Show the welcome modal on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const welcomeModal = document.getElementById('welcome-modal');
+            welcomeModal.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
