@@ -75,9 +75,63 @@
         .add-note-btn:hover {
             background-color: #60a5fa;
         }
+        
+        /* Welcome modal styles */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: backdrop-filter 0.5s ease;
+        }
+
+        .welcome-modal-content {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 500px;
+            margin: 1rem;
+            transform: scale(1);
+            transition: transform 0.3s ease-out;
+            animation: bounceIn 0.5s forwards;
+        }
+
+        @keyframes bounceIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center p-4">
+
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-4">Gratitude Wall</h1>
+            <p class="text-lg text-gray-700 mb-6">
+                Welcome to the Gratitude Wall! This interactive space is designed to help you build <strong>social awareness</strong> and <strong>community engagement</strong>.
+                <br><br>
+                The act of intentionally sharing what you're thankful for not only helps you cultivate a more positive mindset, but it also creates a space for others to see the good things in the world. As you read what others are grateful for, you'll be practicing <strong>empathy</strong> and seeing the world from a different perspective.
+            </p>
+            <button onclick="closeWelcomeModal()" class="px-6 py-2 bg-indigo-500 text-white font-semibold rounded-full hover:bg-indigo-600 transition-colors">Begin Contributing</button>
+        </div>
+    </div>
 
     <!-- Header and "Add Note" Button -->
     <div class="fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white bg-opacity-70 backdrop-blur-md rounded-b-3xl shadow-md">
@@ -352,7 +406,7 @@
             const viewNote = (note) => {
                 const viewCardContent = document.getElementById('viewCardContent');
                 viewCardContent.innerHTML = `
-                    <div class="${cardStyles[note.cardStyle].join(' ')} rounded-3xl p-6 mb-4 shadow-inner"> /* Updated class */
+                    <div class="${cardStyles[note.cardStyle].join(' ')} rounded-3xl p-6 mb-4 shadow-inner">
                         <h3 class="font-bold text-2xl mb-2">${note.title}</h3>
                         <p class="text-base">${note.body}</p>
                     </div>
@@ -464,6 +518,21 @@
             
             // Initial render
             renderNotes();
+            
+            // Function to close the welcome modal
+            const closeWelcomeModal = () => {
+                const welcomeModal = document.getElementById('welcome-modal');
+                welcomeModal.style.animation = 'none';
+                welcomeModal.style.transform = 'scale(0.8)';
+                welcomeModal.style.opacity = '0';
+                setTimeout(() => {
+                    welcomeModal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling if disabled
+                }, 300);
+            };
+            
+            // Show the welcome modal on page load
+            showModal(document.getElementById('welcome-modal'));
         });
     </script>
 </body>
