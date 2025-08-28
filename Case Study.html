@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,6 +197,15 @@
             let currentCaseStudyIndex = 0;
             let currentReflectionAnswered = {};
 
+            // Helper function to shuffle an array
+            const shuffleArray = (array) => {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            };
+
             const caseStudies = [
                 {
                     title: "The Art Project: A Case Study",
@@ -227,6 +237,7 @@
                                 { value: "B", text: "B. Acknowledge Chris's effort and passion before offering constructive criticism." },
                                 { value: "C", text: "C. Avoid giving negative feedback and only focus on the positive aspects." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "This approach is direct but can come across as blunt and unfeeling, which can make the recipient feel invalidated.",
                                 "B": "This is a great approach. By acknowledging Chris's hard work, Ms. Evans validates his effort before giving constructive criticism, making it more likely to be received positively.",
@@ -240,6 +251,7 @@
                                 { value: "B", text: "B. He felt his personal effort and passion were being rejected, not just the project itself." },
                                 { value: "C", text: "C. He was not prepared for any feedback at all." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While he might feel this way, the core reason for his defensiveness is more personal.",
                                 "B": "That's a key insight. For a creative person, their work is often a part of them. The harsh critique felt like an attack on his personal value and effort, not just the art piece.",
@@ -253,6 +265,7 @@
                                 { value: "B", text: "B. He might get a lower grade, but he will learn to stand by his beliefs." },
                                 { value: "C", text: "C. The teacher will be angry and fail him." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "This is unlikely, as Ms. Evans has already stated that the project doesn't meet her standards.",
                                 "B": "This is the most realistic outcome. By sticking to his vision, he might not get the grade he wants, but he will learn a valuable lesson in artistic integrity and conviction.",
@@ -266,6 +279,7 @@
                                 { value: "B", text: "B. Managing his time effectively." },
                                 { value: "C", text: "C. Coping with criticism and validating his self-worth." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "The case study states he spent weeks on his project, so procrastination isn't the issue.",
                                 "B": "Time management is not the core issue here, as the problem is with the feedback and his feelings.",
@@ -279,6 +293,7 @@
                                 { value: "B", text: "B. That all criticism is bad and should be ignored." },
                                 { value: "C", text: "C. How to separate his personal feelings from constructive criticism and learn from it." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "This is a negative, unhelpful lesson to learn from the experience.",
                                 "B": "This is an unhelpful lesson and will prevent Chris from growing as an artist.",
@@ -318,6 +333,7 @@
                                 { value: "B", text: "B. Confront Chloe in a private setting to understand her situation." },
                                 { value: "C", text: "C. Immediately go to the teacher to report Chloe." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While this might save your grade in the short term, it teaches Chloe that her behavior has no consequences and is unfair to you and Liam.",
                                 "B": "This is the most responsible first step. By talking to Chloe first, you show empathy and give her a chance to explain her situation and fix the problem before involving an authority figure.",
@@ -331,6 +347,7 @@
                                 { value: "B", text: "B. They will set a precedent that it's okay for Chloe to not do her work in the future." },
                                 { value: "C", text: "C. Chloe will feel guilty and help them on the next project." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While you might get a good grade, the underlying issue of Chloe's behavior remains and could cause problems in the future.",
                                 "B": "That's a key risk. By doing her work, you are effectively enabling her behavior and making it more likely that she will repeat it in the future.",
@@ -344,6 +361,7 @@
                                 { value: "B", text: "B. Subject matter expertise." },
                                 { value: "C", text: "C. Communication and problem-solving." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "While time management is important for a group project, it's not the primary skill they are developing in this situation.",
                                 "B": "The case study doesn't indicate a lack of subject matter expertise, so this isn't the core skill being developed.",
@@ -357,6 +375,7 @@
                                 { value: "B", text: "B. She is overwhelmed with other classes or personal issues." },
                                 { value: "C", text: "C. She doesn't like Liam and Sarah." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While this is a possible reason, assuming laziness without a conversation is often unfair. There could be other factors at play.",
                                 "B": "This is a good point to consider. Sometimes, people's lack of participation is a symptom of being overwhelmed, rather than a lack of caring.",
@@ -370,6 +389,7 @@
                                 { value: "B", text: "B. If they handle it well, it could strengthen their ability to work through conflict." },
                                 { value: "C", text: "C. They will all become best friends." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "This is a pessimistic outlook. While conflict can strain relationships, it doesn't always have to end them.",
                                 "B": "Exactly. A well-handled conflict can build trust and show that a friendship is strong enough to withstand difficult conversations.",
@@ -408,6 +428,7 @@
                                 { value: "B", text: "B. Balancing loyalty to his teammates with his responsibility as a leader." },
                                 { value: "C", text: "C. Deciding if Leo is a good player." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While winning is a goal, the core problem is a social conflict, not a strategic one.",
                                 "B": "That's a key insight. Jordan feels a pull between his friends and his duty to create a positive team culture.",
@@ -421,6 +442,7 @@
                                 { value: "B", text: "B. Pull the players aside and talk to them privately about respect and teamwork." },
                                 { value: "C", text: "C. Ignore the comments and hope they stop on their own." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "Yelling can escalate the conflict and create a hostile environment. It is not an effective way to communicate.",
                                 "B": "This is a great approach. Talking to them privately shows respect and gives them a chance to understand the impact of their actions without being publicly shamed.",
@@ -434,9 +456,10 @@
                                 { value: "B", text: "B. The jokes will stop, and Leo will feel accepted." },
                                 { value: "C", text: "C. It could lead to a toxic team environment, lower morale, and Leo leaving the team." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "This is an unlikely outcome. Unresolved conflict typically leads to division, not unity.",
-                                "B": "Ignoring a problem rarely makes it go away. It is more likely to make the situation worse for Leo.",
+                                "B": "Ignoring a problem rarely makes it away. It is more likely to make the situation worse for Leo.",
                                 "C": "That's right. The lack of action from a leader can be interpreted as approval of the behavior, which can destroy team morale and cohesion."
                             }
                         },
@@ -447,6 +470,7 @@
                                 { value: "B", text: "B. He might feel alienated and lose confidence." },
                                 { value: "C", text: "C. He will become a better player." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "This is a positive outcome that is unlikely to happen without intervention from the captain.",
                                 "B": "That's the most likely outcome. The teasing can lead to a sense of isolation, making him feel like he doesn't belong and hurting his confidence.",
@@ -460,6 +484,7 @@
                                 { value: "B", text: "B. A good leader must be able to handle difficult social situations and prioritize a positive team culture." },
                                 { value: "C", text: "C. A good leader is the best player on the team." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While winning is important, prioritizing it at the expense of a healthy team environment is not a sign of good leadership.",
                                 "B": "Correct. This case study shows that true leadership isn't just about skill or strategy; it's about courageously addressing difficult social issues for the good of the team.",
@@ -498,6 +523,7 @@
                                 { value: "B", text: "B. Have an open and honest conversation with Mia about her feelings." },
                                 { value: "C", text: "C. Immediately end the friendship without explanation." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "This is a passive and indirect way to express her feelings. It is likely to create more drama and conflict.",
                                 "B": "That's a great approach. By talking directly with Mia, Sarah is showing maturity and giving Mia a chance to explain her side and understand how her actions have affected Sarah.",
@@ -511,6 +537,7 @@
                                 { value: "B", text: "B. She secretly hates Sarah and her old friends." },
                                 { value: "C", text: "C. She is trying to get Sarah to join the new group." }
                             ],
+                            correctAnswer: "A",
                             feedback: {
                                 "A": "This is the most likely reason. Sometimes, people change their behavior to fit into a new social group, even if it means alienating their old friends.",
                                 "B": "This is a strong assumption that is not supported by the information in the case study.",
@@ -524,6 +551,7 @@
                                 { value: "B", text: "B. Dealing with her parents." },
                                 { value: "C", text: "C. Navigating feelings of betrayal and insecurity in a changing friendship." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "The case study does not mention her schoolwork, so this is not the main issue.",
                                 "B": "The case study does not mention her parents, so this is not the main issue.",
@@ -537,6 +565,7 @@
                                 { value: "B", text: "B. Wait for Mia to come back to their old friendship." },
                                 { value: "C", text: "C. Try to force herself into Mia's new friend group." }
                             ],
+                            correctAnswer: "A",
                             feedback: {
                                 "A": "This is a great idea. Focusing on her own interests and personal growth can help her feel more confident and less reliant on one person for her self-worth.",
                                 "B": "This is a passive approach that could lead to more disappointment and hurt feelings.",
@@ -550,6 +579,7 @@
                                 { value: "B", text: "B. It will teach her to be more assertive and to value her own feelings." },
                                 { value: "C", text: "C. It will teach her that friendships never last." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "This is a negative outcome that can lead to unhealthy relationships in the future.",
                                 "B": "That's the best outcome. This experience can teach Sarah to stand up for herself, communicate her needs, and build stronger, healthier friendships in the future.",
@@ -588,6 +618,7 @@
                                 { value: "B", text: "B. The conflict between loyalty to a friend and upholding academic integrity." },
                                 { value: "C", text: "C. The conflict between her own beliefs and the beliefs of the teacher." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "The case study does not mention her personal gain, so this is not the main dilemma.",
                                 "B": "Correct. This is a classic ethical dilemma where a person must choose between two conflicting values: friendship and honesty.",
@@ -601,6 +632,7 @@
                                 { value: "B", text: "B. Ignore the cheating to protect her friend." },
                                 { value: "C", text: "C. Speak with Ben privately after the exam to address her concerns and encourage him to confess." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "While this upholds academic integrity, it lacks empathy for Ben's difficult situation.",
                                 "B": "This shows loyalty, but it's not empathetic. It enables Ben's behavior and puts Maya's integrity at risk.",
@@ -614,6 +646,7 @@
                                 { value: "B", text: "B. He feels immense pressure to succeed and is afraid of failing." },
                                 { value: "C", text: "C. He doesn't think cheating is a big deal." }
                             ],
+                            correctAnswer: "B",
                             feedback: {
                                 "A": "While he might not like the teacher, the case study states he is struggling in the class, which is a more likely reason for his cheating.",
                                 "B": "This is the most likely underlying issue. Cheating is often a symptom of fear and pressure, not a lack of morals.",
@@ -627,6 +660,7 @@
                                 { value: "B", text: "B. The friendship will grow stronger because Ben will appreciate her honesty." },
                                 { value: "C", text: "C. Their friendship will be unaffected." }
                             ],
+                            correctAnswer: "A",
                             feedback: {
                                 "A": "This is the most likely outcome in the short term. Ben will feel betrayed and may end the friendship, at least for a while.",
                                 "B": "This is an optimistic outcome that is unlikely to happen immediately. It might happen in the long run, but only after some time and healing.",
@@ -640,6 +674,7 @@
                                 { value: "B", text: "B. That he can get away with cheating if he is careful." },
                                 { value: "C", text: "C. The importance of integrity and the value of true friendship." }
                             ],
+                            correctAnswer: "C",
                             feedback: {
                                 "A": "This is an unhelpful lesson to learn. It would only encourage him to cheat again.",
                                 "B": "This is a negative outcome that would not help him grow as a person.",
@@ -693,7 +728,8 @@
                 // Load comprehension quiz
                 quizQuestion.textContent = caseStudy.quiz.question;
                 quizOptionsContainer.innerHTML = '';
-                caseStudy.quiz.options.forEach(option => {
+                const shuffledQuizOptions = shuffleArray([...caseStudy.quiz.options]);
+                shuffledQuizOptions.forEach(option => {
                     const label = document.createElement('label');
                     label.className = 'radio-label';
                     label.innerHTML = `
@@ -710,7 +746,8 @@
                     questionDiv.innerHTML = `<h3 class="text-xl font-semibold text-gray-700 mb-2">${refQ.question}</h3>`;
                     const optionsDiv = document.createElement('div');
                     optionsDiv.className = 'reflection-question-options space-y-4';
-                    refQ.options.forEach((option, oIndex) => {
+                    const shuffledReflectionOptions = shuffleArray([...refQ.options]);
+                    shuffledReflectionOptions.forEach((option) => {
                         const label = document.createElement('label');
                         label.innerHTML = `
                             <input type="radio" name="q${qIndex + 1}-response" value="${option.value}" class="mr-2">
@@ -849,4 +886,4 @@
         });
     </script>
 </body>
-</html>
+</ht
