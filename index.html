@@ -1,22 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SEL Web Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        a { display: block; margin: 10px; font-size: 1.2em; }
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-slate-50 min-h-screen flex items-center justify-center p-6;
+        }
+        .tooltip-container {
+            position: relative;
+        }
+        .tooltip {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            white-space: nowrap;
+        }
     </style>
 </head>
-<body>
-    <h1>Welcome to SEL Web Projects!</h1>
-    <p>Click a link below to explore the projects:</p>
-    <a href="Canvas%20of%20the%20Mind.html">Canvas of the Mind</a>
-    <a href="Digital%20Journal.html">Digital Journal</a>
-    <a href="Emotional%20Compass.html">Emotional Compass</a>
-    <a href="Feelings%20Explorer.html">Feelings Explorer</a>
-    <a href="Gratitude%20Wall.html">Gratitude Wall</a>
-    <a href="Social%20Emotional%20Game.html">Social Emotional Game</a>
-    <a href="Stellar%20Resilience.html">Stellar Resilience</a>
-    <a href="Case%20Study.html">Case Study</a>
+<body class="bg-gray-50 text-gray-800">
+    <div class="flex items-center justify-center min-h-screen p-6">
+        <div class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-2xl transition-all duration-300 hover:shadow-2xl">
+            <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-2">SEL Web Projects</h1>
+            <p class="text-center text-gray-500 mb-8 font-light">Explore projects focusing on Social and Emotional Learning.</p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+
+                <!-- Digital Journal -->
+                <div class="group tooltip-container w-full max-w-xs">
+                    <a href="Digital%20Journal.html" class="block text-xl font-medium text-indigo-600 py-4 px-6 rounded-xl text-center transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-800">Digital Journal</a>
+                    <div class="tooltip mt-2 p-4 bg-gray-800 text-white text-sm rounded-lg shadow-xl hidden group-hover:block transition-all duration-300 transform scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100">
+                        <p class="font-bold mb-2 text-indigo-300">Self-Awareness</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300">
+                            <li>Integrating personal and social identities</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Emotional Compass -->
+                <div class="group tooltip-container w-full max-w-xs">
+                    <a href="Emotional%20Compass.html" class="block text-xl font-medium text-indigo-600 py-4 px-6 rounded-xl text-center transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-800">Emotional Compass</a>
+                    <div class="tooltip mt-2 p-4 bg-gray-800 text-white text-sm rounded-lg shadow-xl hidden group-hover:block transition-all duration-300 transform scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100">
+                        <p class="font-bold mb-2 text-indigo-300">Self-Awareness</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300">
+                            <li>Identifying one’s emotions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Feelings Explorer -->
+                <div class="group tooltip-container w-full max-w-xs">
+                    <a href="Feelings%20Explorer.html" class="block text-xl font-medium text-indigo-600 py-4 px-6 rounded-xl text-center transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-800">Feelings Explorer</a>
+                    <div class="tooltip mt-2 p-4 bg-gray-800 text-white text-sm rounded-lg shadow-xl hidden group-hover:block transition-all duration-300 transform scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100">
+                        <p class="font-bold mb-2 text-indigo-300">Self-Awareness</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300">
+                            <li>Identifying one’s emotions</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Interactive Case Study -->
+                <div class="group tooltip-container w-full max-w-xs">
+                    <a href="Case%20Study/index.html" class="block text-xl font-medium text-indigo-600 py-4 px-6 rounded-xl text-center transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-800">Interactive Case Study</a>
+                    <div class="tooltip mt-2 p-4 bg-gray-800 text-white text-sm rounded-lg shadow-xl hidden group-hover:block transition-all duration-300 transform scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100">
+                        <p class="font-bold mb-2 text-indigo-300">Social-Awareness</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300">
+                            <li>Taking others’ perspectives</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Social Emotional Game -->
+                <div class="group tooltip-container w-full max-w-xs">
+                    <a href="Social%20Emotional%20Game.html" class="block text-xl font-medium text-indigo-600 py-4 px-6 rounded-xl text-center transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-800">Social Emotional Game</a>
+                    <div class="tooltip mt-2 p-4 bg-gray-800 text-white text-sm rounded-lg shadow-xl hidden group-hover:block transition-all duration-300 transform scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100">
+                        <p class="font-bold mb-2 text-indigo-300">Social-Awareness</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300">
+                            <li>Demonstrating empathy and compassion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
